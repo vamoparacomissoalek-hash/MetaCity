@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>META CITY - Imobiliária Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #00ffcc;
+            --danger: #ff0055;
+            --bg: #020b1a;
+            --glass: rgba(10, 25, 47, 0.7);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            width: 100%;
+            background: linear-gradient(to bottom, #001f3f, transparent);
+        }
+
+        h1 { font-size: 3.5em; margin: 0; letter-spacing: 10px; text-shadow: 0 0 15px var(--primary); }
+
+        .wallet-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary);
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        /* Grid de Casas */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 40px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Estilo da Imagem com Cursor de Lupa */
+        .card img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+            cursor: zoom-in; 
+            background: #000;
+        }
+        
+        .info { padding: 20px; text-align: center; }
+        .price { font-size: 1.6em; color: var(--secondary); display: block; margin-bottom: 15px; font-weight: bold; }
+
+        button { cursor: pointer; border: none; font-family: 'Rajdhani'; font-weight: bold; border-radius: 5px; text-transform: uppercase; }
+        .btn-buy { background: var(--primary); color: #000; padding: 12px; width: 100%; }
+        .btn-buy:disabled { background: #222; color: #555; cursor: not-allowed; }
+
+        /* Modais Gerais */
+        .modal { position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: #0a192f; padding: 40px; border: 2px solid var(--primary); border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
+        input { display: block; width: 100%; margin: 12px 0; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); color: #fff; border-radius: 8px; font-family: 'Rajdhani'; }
+
+        /* MODAL DE ZOOM DA FOTO */
+        #zoom-modal {
+            display: none;
+            position: fixed;
+            z-index: 20000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        #zoom-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        .owner-panel { background: rgba(255, 0, 85, 0.05); border: 1px solid var(--danger); padding: 20px; margin: 20px; border-radius: 10px; width: 90%; max-width: 1000px; }
+    </style>
+</head>
+<body onload="checkLogin()">
+
+    <div id="zoom-modal" onclick="this.style.display='none'">
+        <img id="img-ampliada" src="">
+        <p style="position: absolute; bottom: 20px; color: #fff;">Clique em qualquer lugar para fechar</p>
+    </div>
+
+    <div id="login-screen" class="modal">
+        <div class="modal-content">
+            <h2>META ACCESS</h2>
+            <input type="email" id="email" placeholder="E-mail">
+            <input type="password" id="pass" placeholder="Senha">
+            <div id="extra-fields">
+                <input type="text" id="nickname" placeholder="Nick Minecraft">
+                <input type="number" id="initial-money" placeholder="Saldo Atual (MetaCash)">
+            </div>
+            <button class="btn-buy" onclick="handleAuth()">Sincronizar</button>
+        </div>
+    </div>
+
+    <div id="main-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <header>
+            <h1>META CITY</h1>
+            <div class="wallet-card" id="user-info">CARREGANDO...</div>
+            <br><br>
+            <button onclick="logout()" style="background:none; color:var(--danger); border:1px solid var(--danger); padding:5px; font-size:0.7em;">LOGOUT</button>
+        </header>
+
+        <div id="owner-panel" class="owner-panel" style="display: none;">
+            <h3 style="color: var(--danger); margin: 0 0 10px 0;">📊 VENDAS REALIZADAS (METACASH)</h3>
+            <div id="notifications">Nenhuma atividade.</div>
+        </div>
+
+        <main class="container" id="catalogo"></main>
+    </div>
+
+    <script>
+        const OWNER_EMAIL = "vamoparacomissoalek@gmail.com";
+        let currentUser = null;
+
+        const casas = [
+            { id: 1, preco: 2500, img: "casa1.jpg" },
+            { id: 2, preco: 3000, img: "casa2.jpg" },
+            { id: 3, preco: 3500, img: "casa3.jpg" },
+            { id: 4, preco: 4000, img: "casa4.jpg" },
+            { id: 5, preco: 5000, img: "casa5.jpg" },
+            { id: 6, preco: 6000, img: "casa6.jpg" },
+            { id: 7, preco: 7500, img: "casa7.jpg" },
+            { id: 8, preco: 8000, img: "casa8.jpg" },
+            { id: 9, preco: 9500, img: "casa9.jpg" },
+            { id: 10, preco: 10000, img: "casa10.jpg" },
+            { id: 11, preco: 12000, img: "casa11.jpg" },
+            { id: 12, preco: 15000, img: "casa12.jpg" },
+            { id: 13, preco: 18000, img: "casa13.jpg" },
+            { id: 14, preco: 20000, img: "casa14.jpg" },
+            { id: 15, preco: 25000, img: "casa15.jpg" },
+            { id: 16, preco: 30000, img: "casa16.jpg" },
+            { id: 17, preco: 35000, img: "casa17.jpg" },
+            { id: 18, preco: 40000, img: "casa18.jpg" },
+            { id: 19, preco: 45000, img: "casa19.jpg" },
+            { id: 20, preco: 50000, img: "casa20.jpg" }
+        ];
+
+        function checkLogin() {
+            const saved = localStorage.getItem('meta_session');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                document.getElementById('login-screen').style.display = 'none';
+                renderUI();
+            }
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const nick = document.getElementById('nickname').value;
+            const money = document.getElementById('initial-money').value;
+
+            if (!email || !pass) return alert("Preencha e-mail e senha!");
+
+            const storedPass = localStorage.getItem('pass_' + email);
+            if (!storedPass) {
+                if(!nick || !money) return alert("Primeiro acesso? Informe Nick e Saldo!");
+                localStorage.setItem('pass_' + email, pass);
+            } else if (pass !== storedPass) {
+                return alert("Senha incorreta!");
+            }
+
+            currentUser = { email, nick: nick || "User", balance: parseFloat(money) || 0 };
+            localStorage.setItem('meta_session', JSON.stringify(currentUser));
+            location.reload();
+        }
+
+        function renderUI() {
+            document.getElementById('user-info').innerHTML = 
+                `PLAYER: <b style="color:#fff">${currentUser.nick}</b> | 
+                 CARTEIRA: <b style="color:var(--secondary)">${currentUser.balance.toLocaleString()} MetaCash</b>`;
+
+            if (currentUser.email === OWNER_EMAIL) document.getElementById('owner-panel').style.display = 'block';
+            renderCatalogo();
+        }
+
+        function renderCatalogo() {
+            const container = document.getElementById('catalogo');
+            container.innerHTML = casas.map(casa => {
+                const canBuy = currentUser.balance >= casa.preco;
+                return `
+                    <div class="card">
+                        <img src="${casa.img}" onclick="abrirZoom('${casa.img}')" onerror="this.src='https://via.placeholder.com/400x200?text=Clique+para+ver'">
+                        <div class="info">
+                            <h3 style="margin:0; color:#fff">PROPRIEDADE #${casa.id}</h3>
+                            <span class="price">${casa.preco.toLocaleString()} MC</span>
+                            <button class="btn-buy" ${canBuy ? '' : 'disabled'} 
+                                onclick="comprar(${casa.id}, ${casa.preco})">
+                                ${canBuy ? 'ADQUIRIR' : 'SALDO INSUFICIENTE'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Função para mostrar a foto inteira
+        function abrirZoom(src) {
+            const modal = document.getElementById('zoom-modal');
+            const img = document.getElementById('img-ampliada');
+            img.src = src;
+            modal.style.display = 'flex';
+        }
+
+        function comprar(id, preco) {
+            currentUser.balance -= preco;
+            localStorage.setItem('meta_session', JSON.stringify(currentUser));
+
+            const painel = document.getElementById('notifications');
+            const log = document.createElement('div');
+            log.style.padding = "8px";
+            log.style.borderBottom = "1px solid #222";
+            log.innerHTML = `💸 <b>${currentUser.nick}</b> comprou a <b>Casa #${id}</b>.<br>
+                             <code>Comando: /money take ${currentUser.nick} ${preco}</code>`;
+            
+            if(painel.innerText.includes("Nenhuma")) painel.innerHTML = "";
+            painel.prepend(log);
+
+            renderUI();
+            alert(`Compra da Propriedade #${id} realizada!`);
+        }
+
+        function logout() {
+            localStorage.removeItem('meta_session');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
