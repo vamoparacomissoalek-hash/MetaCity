@@ -1,282 +1,946 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>META STORE - Minecraft Style</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --mc-green: #3c8527;
-            --mc-green-hover: #53a039;
-            --mc-gray: #313233;
-            --mc-dark: #1e1e1f;
-            --mc-border: #000000;
-            --mc-text: #ffffff;
-            --mc-stone: #5a5a5a;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CraftStore — Loja Minecraft</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
 
-        * { box-sizing: border-box; }
+  :root {
+    --dirt:       #866043;
+    --grass:      #5D8A3C;
+    --grass-top:  #79C258;
+    --stone:      #8B8B8B;
+    --stone-dark: #5A5A5A;
+    --gold:       #FFD700;
+    --diamond:    #4FE6E6;
+    --emerald:    #50C878;
+    --redstone:   #FF2020;
+    --night:      #0A0E1A;
+    --panel:      #1C1C2E;
+    --panel2:     #252540;
+    --border:     #3D3D6B;
+    --text:       #E8E8E8;
+    --text-dim:   #999;
+  }
 
-        body {
-            font-family: 'VT323', monospace;
-            background-color: var(--mc-gray);
-            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Textura sutil */
-            color: var(--mc-text);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 1.2rem;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* TELA DE LOGIN */
-        #login-screen {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
+  body {
+    font-family: 'VT323', monospace;
+    background: var(--night);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Crect width='4' height='16' x='6' fill='%23fff'/%3E%3Crect width='16' height='4' y='6' fill='%23fff'/%3E%3C/svg%3E") 8 8, crosshair;
+  }
 
-        .login-box {
-            background: var(--mc-stone);
-            border: 4px solid var(--mc-border);
-            padding: 30px;
-            width: 350px;
-            text-align: center;
-            box-shadow: inset -4px -4px 0px #333, inset 4px 4px 0px #888;
-        }
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      radial-gradient(1px 1px at 8%  12%, #fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 25%  4%, #ccc 0%,transparent 100%),
+      radial-gradient(2px 2px at 45% 22%, #fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 67%  9%, #ddd 0%,transparent 100%),
+      radial-gradient(1px 1px at 83% 18%, #fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 18% 38%, #bbb 0%,transparent 100%),
+      radial-gradient(2px 2px at 57% 48%, #fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 91% 33%, #ccc 0%,transparent 100%),
+      radial-gradient(1px 1px at 35% 70%, #aaa 0%,transparent 100%),
+      radial-gradient(1px 1px at 74% 60%, #ddd 0%,transparent 100%);
+    pointer-events:none;
+    z-index:0;
+  }
 
-        .login-box h2 { font-size: 2.5rem; margin-top: 0; text-shadow: 2px 2px #000; }
+  header {
+    background: linear-gradient(180deg, #1a2a0a 0%, #2d4a1a 60%, var(--grass) 100%);
+    border-bottom: 8px solid var(--dirt);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background: #000;
-            border: 2px solid #555;
-            color: #0f0;
-            font-family: 'VT323';
-            font-size: 1.2rem;
-        }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 28px;
+    max-width: 1400px;
+    margin: auto;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
 
-        /* BOTÃO ESTILO MINECRAFT */
-        .mc-button {
-            background: #7c7c7c;
-            border: 3px solid #000;
-            color: white;
-            padding: 10px 20px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: inset -3px -3px 0px #444, inset 3px 3px 0px #aaa;
-            font-family: 'VT323';
-            font-size: 1.3rem;
-            width: 100%;
-        }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-svg { width:44px; height:44px; image-rendering:pixelated; }
+  .logo-text { font-family:'Press Start 2P',monospace; font-size:16px; color:var(--grass-top); text-shadow:3px 3px 0 #000; }
+  .logo-sub  { font-family:'Press Start 2P',monospace; font-size:7px;  color:var(--gold);      text-shadow:2px 2px 0 #000; }
 
-        .mc-button:hover { background: var(--mc-green); box-shadow: inset -3px -3px 0px #255018, inset 3px 3px 0px #5eb83e; }
-        .mc-button:disabled { filter: grayscale(1); cursor: not-allowed; }
+  nav { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
 
-        /* HEADER */
-        header {
-            background: var(--mc-dark);
-            width: 100%;
-            padding: 20px;
-            border-bottom: 4px solid var(--mc-green);
-            text-align: center;
-        }
+  .nav-btn {
+    font-family:'Press Start 2P',monospace;
+    font-size:7px;
+    padding:7px 12px;
+    background:var(--stone-dark);
+    color:#fff;
+    border:3px solid #000;
+    cursor:pointer;
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.5),inset 3px 3px 0 rgba(255,255,255,.2);
+    transition:all .1s;
+    text-transform:uppercase;
+  }
+  .nav-btn:hover  { background:var(--stone); transform:translateY(-2px); }
+  .nav-btn.owner  { background:#7B2020; color:var(--gold); }
+  .nav-btn.owner:hover { background:#a02020; }
 
-        h1 { font-size: 4rem; color: var(--mc-green); margin: 0; text-shadow: 4px 4px #000; }
+  .profile-badge {
+    display:flex; align-items:center; gap:8px;
+    background:#0a0a1a;
+    border:3px solid var(--border);
+    padding:5px 12px;
+    font-family:'Press Start 2P',monospace;
+    font-size:7px;
+  }
+  .owner-star { color:var(--gold); }
 
-        .user-bar {
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-around;
-            border: 2px dashed var(--mc-green);
-        }
+  .grass-stripe {
+    height:12px;
+    background:repeating-linear-gradient(90deg,var(--grass-top) 0,var(--grass-top) 16px,var(--grass) 16px,var(--grass) 32px);
+    border-top:4px solid #000;
+    border-bottom:4px solid #000;
+  }
 
-        /* CONTEÚDO PRINCIPAL */
-        .main-container {
-            display: flex;
-            max-width: 1200px;
-            width: 100%;
-            padding: 20px;
-            gap: 20px;
-        }
+  .hero {
+    background:linear-gradient(180deg,#0f1a2e 0%,#0d2040 50%,#1a2a0a 100%);
+    padding:32px 28px;
+    text-align:center;
+    position:relative;
+    z-index:1;
+    border-bottom:8px solid var(--dirt);
+  }
+  .hero h1 { font-family:'Press Start 2P',monospace; font-size:24px; color:var(--grass-top); text-shadow:4px 4px 0 #000,6px 6px 0 #1a4a0a; margin-bottom:10px; }
+  .hero p   { font-size:20px; color:var(--text-dim); margin-bottom:20px; }
 
-        /* GRID DE PRODUTOS */
-        .products-grid {
-            flex: 3;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
+  .balance-bar {
+    display:inline-block;
+    background:#0a0a1a;
+    border:4px solid var(--gold);
+    padding:9px 22px;
+    font-family:'Press Start 2P',monospace;
+    font-size:10px;
+    color:var(--gold);
+    animation:shimmer 2s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%,100%{box-shadow:0 0 8px var(--gold)}50%{box-shadow:0 0 24px var(--gold)} }
 
-        .product-card {
-            background: #4e4e4e;
-            border: 3px solid #000;
-            padding: 15px;
-            text-align: center;
-            box-shadow: inset -2px -2px 0px #222, inset 2px 2px 0px #777;
-        }
+  main {
+    max-width:1400px;
+    margin:auto;
+    padding:28px;
+    position:relative;
+    z-index:1;
+  }
 
-        .product-card h3 { margin: 10px 0; color: #ffcc00; }
+  .section { display:none; }
+  .section.active { display:block; }
 
-        /* HISTÓRICO */
-        .history-panel {
-            flex: 1;
-            background: var(--mc-dark);
-            border: 3px solid var(--mc-green);
-            padding: 15px;
-            height: fit-content;
-        }
+  .section-title {
+    font-family:'Press Start 2P',monospace;
+    font-size:13px;
+    color:var(--grass-top);
+    text-shadow:2px 2px 0 #000;
+    margin-bottom:24px;
+    padding-bottom:10px;
+    border-bottom:4px solid var(--grass);
+  }
 
-        .history-panel h3 { border-bottom: 2px solid var(--mc-green); padding-bottom: 5px; }
-        .history-item {
-            font-size: 0.9rem;
-            padding: 5px;
-            border-bottom: 1px solid #333;
-            color: #aaa;
-        }
+  /* GRID — only chest + price + button */
+  .products-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:16px;
+  }
 
-        #custom-alert {
-            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--mc-green); border: 3px solid #000; padding: 15px; z-index: 50000;
-        }
-    </style>
+  .product-card {
+    background:var(--panel);
+    border:4px solid var(--border);
+    box-shadow:inset -4px -4px 0 rgba(0,0,0,.5),inset 4px 4px 0 rgba(255,255,255,.05),4px 4px 0 #000;
+    transition:transform .12s;
+    position:relative;
+    overflow:hidden;
+  }
+  .product-card:hover { transform:translateY(-5px); }
+  .product-card::before {
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;
+    height:4px;
+    background:var(--grass-top);
+  }
+
+  .card-chest {
+    width:100%;
+    padding:18px 0 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#080810;
+    border-bottom:4px solid var(--border);
+  }
+
+  .card-price {
+    font-family:'Press Start 2P',monospace;
+    font-size:9px;
+    color:var(--gold);
+    text-align:center;
+    padding:10px 6px 4px;
+    text-shadow:1px 1px 0 #000;
+  }
+  .card-price span { font-size:7px; color:var(--text-dim); font-family:'VT323',monospace; }
+
+  .btn-buy {
+    font-family:'Press Start 2P',monospace;
+    font-size:7px;
+    padding:9px 0;
+    width:100%;
+    background:var(--emerald);
+    color:#000;
+    border:0;
+    border-top:3px solid #000;
+    cursor:pointer;
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.3),inset 3px 3px 0 rgba(255,255,255,.2);
+    transition:all .1s;
+    display:block;
+  }
+  .btn-buy:hover { background:#6aff99; }
+  .btn-buy:disabled { background:var(--stone-dark); color:var(--text-dim); cursor:not-allowed; }
+
+  .btn-edit-owner {
+    font-family:'Press Start 2P',monospace;
+    font-size:7px;
+    padding:9px 0;
+    width:100%;
+    background:#7B5B00;
+    color:var(--gold);
+    border:0;
+    border-top:3px solid #000;
+    cursor:pointer;
+    transition:all .1s;
+    display:block;
+  }
+  .btn-edit-owner:hover { background:#a07800; }
+
+  .px-divider {
+    height:8px;
+    background:repeating-linear-gradient(90deg,var(--stone-dark) 0,var(--stone-dark) 8px,var(--stone) 8px,var(--stone) 16px);
+    margin:24px 0;
+    border:2px solid #000;
+  }
+
+  .form-group { margin-bottom:16px; }
+  label { display:block; font-family:'Press Start 2P',monospace; font-size:7px; color:var(--text-dim); margin-bottom:7px; }
+  input[type=text],input[type=password],input[type=email],input[type=number],textarea,select {
+    width:100%;
+    background:#0a0a1a;
+    border:3px solid var(--border);
+    color:var(--text);
+    padding:9px 12px;
+    font-family:'VT323',monospace;
+    font-size:19px;
+    outline:none;
+  }
+  input:focus,textarea:focus,select:focus { border-color:var(--grass-top); }
+  textarea { resize:vertical; min-height:72px; }
+
+  .btn-primary {
+    font-family:'Press Start 2P',monospace;
+    font-size:8px;
+    padding:11px 18px;
+    background:var(--grass);
+    color:#fff;
+    border:4px solid #000;
+    cursor:pointer;
+    box-shadow:inset -4px -4px 0 rgba(0,0,0,.4),inset 4px 4px 0 rgba(255,255,255,.15);
+    width:100%;
+    text-transform:uppercase;
+    transition:all .1s;
+    margin-top:4px;
+  }
+  .btn-primary:hover { background:var(--grass-top); transform:translateY(-2px); }
+
+  .btn-secondary {
+    font-family:'Press Start 2P',monospace;
+    font-size:8px;
+    padding:11px 18px;
+    background:var(--stone-dark);
+    color:#fff;
+    border:4px solid #000;
+    cursor:pointer;
+    width:100%;
+    margin-top:8px;
+    transition:all .1s;
+  }
+  .btn-secondary:hover { background:var(--stone); }
+
+  .msg-error   { color:var(--redstone); font-family:'Press Start 2P',monospace; font-size:7px; margin-top:8px; }
+  .msg-success { color:var(--emerald);  font-family:'Press Start 2P',monospace; font-size:7px; margin-top:8px; }
+
+  .modal-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.85);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  .modal-overlay.open { display:flex; }
+
+  .modal {
+    background:var(--panel);
+    border:6px solid var(--border);
+    box-shadow:8px 8px 0 #000,inset 4px 4px 0 rgba(255,255,255,.06);
+    max-width:440px;
+    width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+  }
+
+  .modal-header {
+    background:var(--grass);
+    border-bottom:4px solid #000;
+    padding:12px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .modal-title { font-family:'Press Start 2P',monospace; font-size:10px; color:#fff; text-shadow:2px 2px 0 #000; }
+  .modal-close {
+    font-family:'Press Start 2P',monospace;
+    font-size:11px;
+    background:var(--redstone);
+    color:#fff;
+    border:3px solid #000;
+    width:30px;height:30px;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .modal-body { padding:22px; }
+
+  .tab-bar { display:flex; gap:4px; margin-bottom:18px; border-bottom:4px solid var(--border); }
+  .tab { font-family:'Press Start 2P',monospace; font-size:7px; padding:9px 12px; background:var(--panel); color:var(--text-dim); border:3px solid var(--border); border-bottom:none; cursor:pointer; }
+  .tab.active { background:var(--panel2); color:var(--grass-top); border-color:var(--grass); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  .owner-panel { background:#1a0a0a; border:4px solid #7B2020; box-shadow:0 0 18px rgba(180,20,20,.25); padding:22px; margin-bottom:24px; }
+  .owner-panel h2 { font-family:'Press Start 2P',monospace; font-size:11px; color:var(--gold); margin-bottom:18px; }
+
+  .htable { width:100%; border-collapse:separate; border-spacing:0; margin-top:14px; }
+  .htable th { background:var(--grass); font-family:'Press Start 2P',monospace; font-size:6px; padding:9px; text-align:left; border:2px solid #000; }
+  .htable td { background:var(--panel); font-size:16px; padding:9px; border:2px solid var(--border); }
+  .htable tr:hover td { background:var(--panel2); }
+
+  .balance-edit-panel { background:#0a0a1a; border:4px solid var(--diamond); padding:18px; margin-bottom:18px; box-shadow:0 0 10px rgba(79,230,230,.18); }
+
+  .search-nick { display:flex; gap:8px; margin-bottom:14px; }
+  .search-nick input { flex:1; }
+  .search-nick button { white-space:nowrap; width:auto; margin:0; }
+
+  #toast {
+    position:fixed; bottom:28px; right:28px;
+    background:var(--panel); border:4px solid var(--emerald);
+    padding:12px 18px;
+    font-family:'Press Start 2P',monospace; font-size:7px; color:var(--emerald);
+    z-index:9999;
+    transform:translateY(80px); opacity:0;
+    transition:all .3s;
+    max-width:260px;
+    box-shadow:4px 4px 0 #000;
+  }
+  #toast.show { transform:translateY(0); opacity:1; }
+  #toast.error { border-color:var(--redstone); color:var(--redstone); }
+
+  ::-webkit-scrollbar { width:10px; }
+  ::-webkit-scrollbar-track { background:#0a0a0a; }
+  ::-webkit-scrollbar-thumb { background:var(--stone); border:2px solid #000; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--grass); }
+
+  footer { background:#0a0a0a; border-top:8px solid var(--dirt); padding:20px; text-align:center; }
+  footer p { font-size:16px; color:var(--text-dim); }
+  footer .fs { font-family:'Press Start 2P',monospace; font-size:9px; color:var(--grass); margin-bottom:6px; }
+
+  @media(max-width:600px){
+    .header-inner{padding:10px 14px;}
+    .hero h1{font-size:14px;}
+    main{padding:14px;}
+    .products-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .logo-text{font-size:11px;}
+  }
+</style>
 </head>
-<body onload="init()">
+<body>
 
-    <div id="custom-alert">COMPRA REALIZADA COM SUCESSO!</div>
+<div id="toast"></div>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <h2>MOJANG LOGIN</h2>
-            <input type="text" id="login-nick" placeholder="NICK MINECRAFT">
-            <input type="number" id="login-money" placeholder="SALDO INICIAL">
-            <button class="mc-button" onclick="login()">ENTRAR</button>
-        </div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <svg class="logo-svg" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <rect width="16" height="16" fill="#5D8A3C"/>
+        <rect y="5" width="16" height="11" fill="#866043"/>
+        <rect x="3" y="1" width="10" height="5" fill="#79C258"/>
+        <rect x="5" y="7" width="6" height="5" fill="#5D8A3C"/>
+        <rect x="6" y="8" width="4" height="3" fill="#3a6622"/>
+      </svg>
+      <div>
+        <div class="logo-text">CraftStore</div>
+        <div class="logo-sub">▸ Loja de Itens MC</div>
+      </div>
     </div>
-
-    <header>
-        <h1>META STORE</h1>
-        <div class="user-bar" id="user-bar">
-            <span>PLAYER: <b id="display-nick">-</b></span>
-            <span>SALDO: <b id="display-balance">0</b> MC</span>
-            <span style="cursor:pointer; color:red" onclick="logout()">[SAIR]</span>
+    <nav>
+      <button class="nav-btn" onclick="showSection('shop')">Loja</button>
+      <div id="navLoggedOut">
+        <button class="nav-btn" onclick="openModal('loginModal')">Entrar</button>
+      </div>
+      <div id="navLoggedIn" style="display:none;gap:6px;align-items:center;flex-wrap:wrap;">
+        <div class="profile-badge">
+          <span id="headerNick">—</span>
+          <span id="headerOwnerStar" class="owner-star" style="display:none">★</span>
         </div>
-    </header>
+        <button class="nav-btn" onclick="showSection('profile')">Perfil</button>
+        <button class="nav-btn owner" id="ownerNavBtn" style="display:none" onclick="showSection('owner')">Painel Dono</button>
+        <button class="nav-btn" onclick="logout()">Sair</button>
+      </div>
+    </nav>
+  </div>
+</header>
 
-    <div class="main-container">
-        <main class="products-grid" id="products-grid"></main>
+<div class="grass-stripe"></div>
 
-        <aside class="history-panel">
-            <h3>HISTÓRICO</h3>
-            <div id="history-list">
-                <div class="history-item">Nenhuma compra ainda.</div>
-            </div>
-        </aside>
+<div class="hero">
+  <h1>⚔ CraftStore ⚔</h1>
+  <p>Compre itens exclusivos com seus coins!</p>
+  <div id="heroBalance" style="display:none">
+    <div class="balance-bar">Saldo: <span id="heroBalanceVal">0</span> COINS</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- SHOP -->
+  <section id="sectionShop" class="section active">
+    <div class="section-title">Loja</div>
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="sectionProfile" class="section">
+    <div class="section-title">Meu Perfil</div>
+    <div class="balance-edit-panel">
+      <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--diamond);margin-bottom:14px;">Gerenciar Saldo</div>
+      <div style="font-size:19px;margin-bottom:8px;">Nick: <strong id="profileNick">—</strong></div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:11px;color:var(--gold);margin-bottom:14px;">Saldo: <span id="profileBalance">0</span> Coins</div>
+      <div style="display:flex;gap:8px;max-width:360px;">
+        <input type="number" id="balanceAddInput" placeholder="Quantia (+ ou -)">
+        <button class="btn-buy" style="width:auto;padding:0 14px;border:3px solid #000;" onclick="selfAddBalance()">Alterar</button>
+      </div>
+      <div id="balanceMsg" style="display:none;margin-top:8px;"></div>
+      <div style="font-size:14px;color:var(--text-dim);margin-top:10px;">Adicione ou remova coins da sua conta.</div>
     </div>
+    <div class="px-divider"></div>
+    <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--grass-top);margin-bottom:14px;">Histórico de Compras</div>
+    <table class="htable">
+      <thead><tr><th>Data</th><th>Item</th><th>Preço</th><th>Status</th></tr></thead>
+      <tbody id="profileHistoryBody"></tbody>
+    </table>
+    <div class="px-divider"></div>
+    <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--grass-top);margin-bottom:14px;">Alterar Senha</div>
+    <div style="max-width:360px;">
+      <div class="form-group"><label>Senha Atual</label><input type="password" id="oldPwInput" placeholder="••••••••"></div>
+      <div class="form-group"><label>Nova Senha</label><input type="password" id="newPwInput" placeholder="••••••••"></div>
+      <div class="form-group"><label>Confirmar Nova Senha</label><input type="password" id="confirmPwInput" placeholder="••••••••"></div>
+      <div id="pwMsg"></div>
+      <button class="btn-primary" onclick="changePassword()">Alterar Senha</button>
+    </div>
+  </section>
 
-    <script>
-        let user = null;
-        let history = JSON.parse(localStorage.getItem('meta_history')) || [];
+  <!-- OWNER -->
+  <section id="sectionOwner" class="section">
+    <div class="section-title">Painel do Dono ★</div>
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab(this,'tabProducts')">Produtos</div>
+      <div class="tab" onclick="switchTab(this,'tabHistory')">Histórico</div>
+      <div class="tab" onclick="switchTab(this,'tabUsers')">Usuários</div>
+    </div>
+    <div id="tabProducts" class="tab-content active">
+      <div class="owner-panel">
+        <h2>Gerenciar Produtos</h2>
+        <div class="products-grid" id="ownerProductsGrid"></div>
+        <div class="px-divider"></div>
+        <button class="btn-primary" style="max-width:260px;" onclick="openModal('addProductModal')">+ Adicionar Produto</button>
+      </div>
+    </div>
+    <div id="tabHistory" class="tab-content">
+      <div class="owner-panel">
+        <h2>Histórico de Compras</h2>
+        <div class="search-nick">
+          <input type="text" id="historyNickFilter" placeholder="Filtrar por nick...">
+          <button class="btn-primary" style="width:auto;padding:10px 14px;" onclick="renderOwnerHistory()">Buscar</button>
+          <button class="btn-secondary" style="width:auto;padding:10px 14px;margin:0;" onclick="document.getElementById('historyNickFilter').value='';renderOwnerHistory()">Limpar</button>
+        </div>
+        <table class="htable">
+          <thead><tr><th>Data</th><th>Nick</th><th>Item</th><th>Preço</th></tr></thead>
+          <tbody id="ownerHistoryBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="tabUsers" class="tab-content">
+      <div class="owner-panel">
+        <h2>Usuários</h2>
+        <div class="search-nick">
+          <input type="text" id="userSearch" placeholder="Buscar nick...">
+          <button class="btn-primary" style="width:auto;padding:10px 14px;" onclick="renderUsersTable()">Buscar</button>
+        </div>
+        <table class="htable">
+          <thead><tr><th>Nick</th><th>Email</th><th>Saldo</th><th>Ação</th></tr></thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-        // 10 PRODUTOS
-        const produtos = [];
-        for(let i=1; i<=10; i++) {
-            produtos.push({
-                id: i,
-                nome: `PRODUTO ${i}`,
-                preco: i * 500 // Preços variados: 500, 1000, 1500...
-            });
-        }
+</main>
 
-        function init() {
-            const savedUser = localStorage.getItem('meta_user');
-            if (savedUser) {
-                user = JSON.parse(savedUser);
-                document.getElementById('login-screen').style.display = 'none';
-                updateUI();
-            }
-        }
+<footer>
+  <div class="fs">CraftStore</div>
+  <p>© 2024 — Loja Oficial do Servidor</p>
+</footer>
 
-        function login() {
-            const nick = document.getElementById('login-nick').value;
-            const money = document.getElementById('login-money').value;
+<!-- MODALS -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Entrar na Loja</div><button class="modal-close" onclick="closeModal('loginModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nick do Minecraft</label><input type="text" id="loginNick" placeholder="Ex: Steve123" oninput="handleNickInput()"></div>
+      <div class="form-group" id="loginEmailGroup" style="display:none;"><label>Email</label><input type="email" id="loginEmail" placeholder="seu@gmail.com"></div>
+      <div class="form-group"><label id="loginPwLabel">Senha</label><input type="password" id="loginPw" placeholder="••••••••"></div>
+      <div class="form-group" id="loginConfirmGroup" style="display:none;"><label>Confirmar Senha</label><input type="password" id="loginConfirmPw" placeholder="••••••••"></div>
+      <div id="loginMsg"></div>
+      <button class="btn-primary" onclick="doLogin()">Entrar / Criar Conta</button>
+      <div style="margin-top:10px;font-size:15px;color:var(--text-dim);">Novo? Digite seu nick e crie sua senha.</div>
+    </div>
+  </div>
+</div>
 
-            if(!nick || !money) return alert("Preencha tudo!");
+<div class="modal-overlay" id="buyModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Confirmar Compra</div><button class="modal-close" onclick="closeModal('buyModal')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:center;margin-bottom:16px;" id="buyChestWrap"></div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--grass-top);margin-bottom:10px;" id="buyModalName"></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:18px;"><span>Seu saldo:</span><span style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);" id="buyModalBalance"></span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:18px;"><span>Preço:</span><span style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--redstone);" id="buyModalPrice"></span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:18px;border-top:3px solid var(--border);padding-top:10px;font-size:18px;"><span>Saldo após:</span><span style="font-family:'Press Start 2P',monospace;font-size:10px;" id="buyModalAfter"></span></div>
+      <div id="buyMsg"></div>
+      <button class="btn-primary" id="buyConfirmBtn" onclick="confirmBuy()">Confirmar Compra</button>
+      <button class="btn-secondary" onclick="closeModal('buyModal')">Cancelar</button>
+    </div>
+  </div>
+</div>
 
-            user = { nick: nick, balance: parseFloat(money) };
-            localStorage.setItem('meta_user', JSON.stringify(user));
-            location.reload();
-        }
+<div class="modal-overlay" id="editProductModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Editar Produto</div><button class="modal-close" onclick="closeModal('editProductModal')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editProductId">
+      <div class="form-group"><label>Nome</label><input type="text" id="editProductName"></div>
+      <div class="form-group"><label>Preço (Coins)</label><input type="number" id="editProductPrice" min="1"></div>
+      <div class="form-group"><label>Cor da Caixa</label>
+        <select id="editProductColor">
+          <option value="wood">Madeira</option><option value="gold">Ouro</option>
+          <option value="diamond">Diamante</option><option value="emerald">Esmeralda</option>
+          <option value="redstone">Redstone</option><option value="iron">Ferro</option>
+          <option value="obsidian">Obsidiana</option><option value="netherite">Netherite</option>
+          <option value="ender">Ender</option><option value="magic">Mágico</option>
+        </select>
+      </div>
+      <div id="editProductMsg"></div>
+      <button class="btn-primary" onclick="saveEditProduct()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-        function updateUI() {
-            document.getElementById('display-nick').innerText = user.nick;
-            document.getElementById('display-balance').innerText = user.balance.toLocaleString();
-            
-            renderProducts();
-            renderHistory();
-        }
+<div class="modal-overlay" id="addProductModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Novo Produto</div><button class="modal-close" onclick="closeModal('addProductModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nome</label><input type="text" id="addProductName" placeholder="Ex: Kit VIP"></div>
+      <div class="form-group"><label>Preço (Coins)</label><input type="number" id="addProductPrice" placeholder="500" min="1"></div>
+      <div class="form-group"><label>Cor da Caixa</label>
+        <select id="addProductColor">
+          <option value="wood">Madeira</option><option value="gold">Ouro</option>
+          <option value="diamond">Diamante</option><option value="emerald">Esmeralda</option>
+          <option value="redstone">Redstone</option><option value="iron">Ferro</option>
+          <option value="obsidian">Obsidiana</option><option value="netherite">Netherite</option>
+          <option value="ender">Ender</option><option value="magic">Mágico</option>
+        </select>
+      </div>
+      <div id="addProductMsg"></div>
+      <button class="btn-primary" onclick="saveNewProduct()">Adicionar</button>
+    </div>
+  </div>
+</div>
 
-        function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = produtos.map(p => `
-                <div class="product-card">
-                    <div style="background:#222; height:80px; display:flex; align-items:center; justify-content:center; font-size:2rem;">📦</div>
-                    <h3>${p.nome}</h3>
-                    <p style="color:#0f0">${p.preco} MC</p>
-                    <button class="mc-button" 
-                        ${user.balance >= p.preco ? '' : 'disabled'} 
-                        onclick="buy(${p.id}, ${p.preco}, '${p.nome}')">
-                        ${user.balance >= p.preco ? 'COMPRAR' : 'SEM SALDO'}
-                    </button>
-                </div>
-            `).join('');
-        }
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Editar Saldo</div><button class="modal-close" onclick="closeModal('editUserModal')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editUserNick">
+      <div style="margin-bottom:14px;font-size:19px;">Nick: <strong id="editUserNickDisplay"></strong></div>
+      <div style="margin-bottom:14px;font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);">Saldo atual: <span id="editUserCurrentBalance"></span> Coins</div>
+      <div class="form-group"><label>Novo Saldo</label><input type="number" id="editUserBalanceInput" min="0"></div>
+      <div id="editUserMsg"></div>
+      <button class="btn-primary" onclick="saveUserBalance()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            if(history.length === 0) return;
-            
-            list.innerHTML = history.map(h => `
-                <div class="history-item">
-                    [${h.date}] comprou ${h.item} por ${h.price}
-                </div>
-            `).reverse().join('');
-        }
+<script>
+// ── CHEST PIXEL ART ──────────────────────────────────────────
+const CHEST_PAL = {
+  wood:      ['#9B6B3A','#6B4020','#C8904A','#D4AF37','#8B7520','#7B4A22'],
+  gold:      ['#FFD700','#B8860B','#FFEC60','#FFF8DC','#DAA520','#C8A000'],
+  diamond:   ['#4FE6E6','#1A9A9A','#A0FFFF','#E0FFFF','#20B0B0','#30C0C0'],
+  emerald:   ['#2ECC71','#1A7A45','#80FFB0','#D0FFE0','#27AE60','#20A060'],
+  redstone:  ['#CC2020','#7A0000','#FF6060','#FFD0D0','#AA0000','#AA1010'],
+  iron:      ['#A0A0A0','#606060','#D8D8D8','#F0F0F0','#808080','#787878'],
+  obsidian:  ['#1A0A2E','#0a0016','#3A1A5E','#7B5FA0','#2A0A4E','#250838'],
+  netherite: ['#2A2030','#150B1A','#4A3860','#9B8FA0','#1E1428','#221828'],
+  ender:     ['#0D1033','#060816','#1A2060','#B06AFF','#0A0C28','#0F1240'],
+  magic:     ['#6A0DAD','#3A005D','#C060FF','#FFD700','#4A0080','#520090'],
+};
 
-        function buy(id, price, name) {
-            if(user.balance < price) return;
+function chestSVG(color, size) {
+  const p = CHEST_PAL[color] || CHEST_PAL.wood;
+  const [body,shade,light,lock,lshade,stripe] = p;
+  const s = size/32;
+  const r = (x,y,w,h,f) => `<rect x="${x*s}" y="${y*s}" width="${w*s}" height="${h*s}" fill="${f}"/>`;
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated;display:block">
+    ${r(4,28,24,3,'rgba(0,0,0,.3)')}
+    ${r(4,17,24,11,body)} ${r(25,17,3,11,shade)} ${r(4,17,2,11,light)} ${r(4,26,24,2,shade)}
+    ${r(4,21,24,2,stripe)}
+    ${r(4,7,24,10,body)} ${r(25,7,3,10,shade)} ${r(4,7,2,10,light)} ${r(4,15,24,2,stripe)}
+    ${r(4,7,24,2,light)}
+    ${r(13,15,6,4,shade)} ${r(14,15,4,3,body)}
+    ${r(13,18,6,5,lock)} ${r(14,19,4,4,lshade)} ${r(15,20,2,2,'rgba(0,0,0,.7)')} ${r(13,18,2,1,lock)}
+    ${r(4,6,24,1,'#000')} ${r(3,7,1,11,'#000')} ${r(28,7,1,11,'#000')}
+    ${r(3,16,1,13,'#000')} ${r(28,16,1,13,'#000')} ${r(4,28,24,1,'#000')}
+    ${r(3,6,1,1,'#000')} ${r(28,6,1,1,'#000')}
+  </svg>`;
+}
 
-            user.balance -= price;
-            
-            const now = new Date();
-            const dateStr = now.getHours() + ":" + now.getMinutes();
-            
-            history.push({ item: name, price: price, date: dateStr });
-            
-            localStorage.setItem('meta_user', JSON.stringify(user));
-            localStorage.setItem('meta_history', JSON.stringify(history));
+// ── STATE ─────────────────────────────────────────────────────
+const OWNER_EMAIL = 'vamoparacomissoalek@gmail.com';
+let state = { session:null, products:[], users:{}, purchases:[], pendingBuy:null };
 
-            const alertBox = document.getElementById('custom-alert');
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
+function save() {
+  localStorage.setItem('cs3_products',  JSON.stringify(state.products));
+  localStorage.setItem('cs3_users',     JSON.stringify(state.users));
+  localStorage.setItem('cs3_purchases', JSON.stringify(state.purchases));
+}
+function load() {
+  const p=localStorage.getItem('cs3_products'), u=localStorage.getItem('cs3_users'), pu=localStorage.getItem('cs3_purchases');
+  if(p) state.products=JSON.parse(p); else seedProducts();
+  if(u) state.users=JSON.parse(u);
+  if(pu) state.purchases=JSON.parse(pu);
+}
+function saveSession(nick){ localStorage.setItem('cs3_session',nick); }
+function loadSession(){
+  const nick=localStorage.getItem('cs3_session');
+  if(nick && state.users[nick]){
+    state.session={nick,email:state.users[nick].email,isOwner:state.users[nick].email===OWNER_EMAIL};
+    updateNavUI();
+  }
+}
 
-            updateUI();
-        }
+function seedProducts(){
+  state.products=[
+    {id:1,name:'Kit Iniciante',price:200,color:'wood'},
+    {id:2,name:'Kit Guerreiro',price:600,color:'iron'},
+    {id:3,name:'Kit Ouro',price:900,color:'gold'},
+    {id:4,name:'Kit Diamante',price:1500,color:'diamond'},
+    {id:5,name:'Kit Esmeralda',price:1800,color:'emerald'},
+    {id:6,name:'Kit Redstone',price:1200,color:'redstone'},
+    {id:7,name:'Kit Obsidiana',price:2000,color:'obsidian'},
+    {id:8,name:'Kit Netherite',price:3000,color:'netherite'},
+    {id:9,name:'Kit Ender',price:2500,color:'ender'},
+    {id:10,name:'Kit Mágico',price:4000,color:'magic'},
+  ];
+}
 
-        function logout() {
-            localStorage.removeItem('meta_user');
-            localStorage.removeItem('meta_history');
-            location.reload();
-        }
-    </script>
+function hashPw(pw){ let h=0; for(let i=0;i<pw.length;i++) h=Math.imul(31,h)+pw.charCodeAt(i)|0; return h.toString(36); }
+function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
+function toast(msg,err=false){ const t=document.getElementById('toast'); t.textContent=msg; t.className='show'+(err?' error':''); clearTimeout(t._t); t._t=setTimeout(()=>{t.className=''},3000); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section'+name[0].toUpperCase()+name.slice(1)).classList.add('active');
+  if(name==='shop')    renderProducts();
+  if(name==='profile') renderProfile();
+  if(name==='owner')   {renderOwnerProducts();renderOwnerHistory();renderUsersTable();}
+}
+
+function switchTab(el,id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── AUTH ─────────────────────────────────────────────────────
+function handleNickInput(){
+  const nick=document.getElementById('loginNick').value.trim();
+  const isNew=nick&&!state.users[nick];
+  document.getElementById('loginConfirmGroup').style.display=isNew?'':'none';
+  document.getElementById('loginEmailGroup').style.display=isNew?'':'none';
+  document.getElementById('loginPwLabel').textContent=isNew?'Criar Senha':'Senha';
+  const m=document.getElementById('loginMsg');
+  if(nick&&!isNew) m.innerHTML='<span class="msg-success">Conta encontrada!</span>';
+  else if(isNew)   m.innerHTML='<span style="color:var(--diamond);font-family:\'Press Start 2P\',monospace;font-size:7px;">Novo jogador! Crie sua senha.</span>';
+  else m.innerHTML='';
+}
+
+function doLogin(){
+  const nick=document.getElementById('loginNick').value.trim();
+  const email=document.getElementById('loginEmail').value.trim();
+  const pw=document.getElementById('loginPw').value;
+  const cpw=document.getElementById('loginConfirmPw').value;
+  const m=document.getElementById('loginMsg');
+  if(!nick){m.innerHTML='<span class="msg-error">Digite seu nick!</span>';return;}
+  if(!pw)  {m.innerHTML='<span class="msg-error">Digite a senha!</span>';return;}
+  const isNew=!state.users[nick];
+  if(isNew){
+    if(pw.length<4)  {m.innerHTML='<span class="msg-error">Mínimo 4 caracteres!</span>';return;}
+    if(pw!==cpw)     {m.innerHTML='<span class="msg-error">Senhas não conferem!</span>';return;}
+    if(!email)       {m.innerHTML='<span class="msg-error">Digite seu email!</span>';return;}
+    state.users[nick]={email:email.toLowerCase(),passwordHash:hashPw(pw),balance:500,history:[],createdAt:Date.now()};
+    save(); loginSuccess(nick); toast('Conta criada! Bom jogo, '+nick+'!');
+  } else {
+    if(state.users[nick].passwordHash!==hashPw(pw)){m.innerHTML='<span class="msg-error">Senha incorreta!</span>';return;}
+    loginSuccess(nick); toast('Bem-vindo, '+nick+'!');
+  }
+}
+
+function loginSuccess(nick){
+  state.session={nick,email:state.users[nick].email,isOwner:state.users[nick].email===OWNER_EMAIL};
+  saveSession(nick); closeModal('loginModal');
+  ['loginNick','loginPw','loginConfirmPw','loginEmail'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('loginMsg').innerHTML='';
+  updateNavUI(); renderProducts();
+}
+
+function logout(){ state.session=null; localStorage.removeItem('cs3_session'); updateNavUI(); showSection('shop'); toast('Você saiu.'); }
+
+function updateNavUI(){
+  const li=!!state.session;
+  document.getElementById('navLoggedOut').style.display=li?'none':'';
+  const navIn=document.getElementById('navLoggedIn');
+  navIn.style.display=li?'flex':'none';
+  if(li){
+    document.getElementById('headerNick').textContent=state.session.nick;
+    document.getElementById('headerOwnerStar').style.display=state.session.isOwner?'':'none';
+    document.getElementById('ownerNavBtn').style.display=state.session.isOwner?'':'none';
+    document.getElementById('heroBalance').style.display='';
+    updateHeroBalance();
+  } else { document.getElementById('heroBalance').style.display='none'; }
+}
+
+function updateHeroBalance(){
+  if(!state.session)return;
+  document.getElementById('heroBalanceVal').textContent=(state.users[state.session.nick]?.balance??0).toLocaleString('pt-BR');
+}
+
+// ── RENDER PRODUCTS ──────────────────────────────────────────
+function renderProducts(){
+  document.getElementById('productsGrid').innerHTML=state.products.map(p=>productCard(p,false)).join('');
+}
+
+function productCard(p,isOwner){
+  const li=!!state.session, canBuy=li&&!state.session.isOwner;
+  const svg=chestSVG(p.color,86);
+  const btn=isOwner
+    ?`<button class="btn-edit-owner" onclick="openEditProduct(${p.id})">Editar</button>`
+    :canBuy
+      ?`<button class="btn-buy" onclick="openBuyModal(${p.id})">Comprar</button>`
+      :li&&state.session.isOwner
+        ?`<button class="btn-buy" disabled>Dono</button>`
+        :`<button class="btn-buy" onclick="openModal('loginModal')">Login</button>`;
+  return `<div class="product-card">
+    <div class="card-chest">${svg}</div>
+    <div class="card-price">${p.price.toLocaleString('pt-BR')} <span>coins</span></div>
+    ${btn}
+  </div>`;
+}
+
+// ── BUY ─────────────────────────────────────────────────────
+function openBuyModal(id){
+  const p=state.products.find(x=>x.id===id); if(!p||!state.session)return;
+  state.pendingBuy=id;
+  const balance=state.users[state.session.nick].balance, after=balance-p.price;
+  document.getElementById('buyChestWrap').innerHTML=chestSVG(p.color,100);
+  document.getElementById('buyModalName').textContent=p.name;
+  document.getElementById('buyModalBalance').textContent=balance.toLocaleString('pt-BR')+' Coins';
+  document.getElementById('buyModalPrice').textContent=p.price.toLocaleString('pt-BR')+' Coins';
+  const ae=document.getElementById('buyModalAfter');
+  if(after<0){ae.textContent='Saldo insuficiente!';ae.style.color='var(--redstone)';document.getElementById('buyConfirmBtn').disabled=true;}
+  else       {ae.textContent=after.toLocaleString('pt-BR')+' Coins';ae.style.color='var(--emerald)';document.getElementById('buyConfirmBtn').disabled=false;}
+  document.getElementById('buyMsg').innerHTML='';
+  openModal('buyModal');
+}
+
+function confirmBuy(){
+  const p=state.products.find(x=>x.id===state.pendingBuy); if(!p||!state.session)return;
+  const user=state.users[state.session.nick];
+  if(user.balance<p.price){document.getElementById('buyMsg').innerHTML='<span class="msg-error">Saldo insuficiente!</span>';return;}
+  user.balance-=p.price;
+  const entry={ts:Date.now(),item:p.name,price:p.price};
+  user.history.push(entry); state.purchases.push({...entry,nick:state.session.nick});
+  save(); closeModal('buyModal'); updateHeroBalance(); renderProducts();
+  toast('Compra realizada! '+p.name+' adquirido.');
+}
+
+// ── PROFILE ──────────────────────────────────────────────────
+function renderProfile(){
+  if(!state.session)return;
+  const user=state.users[state.session.nick];
+  document.getElementById('profileNick').textContent=state.session.nick;
+  document.getElementById('profileBalance').textContent=user.balance.toLocaleString('pt-BR');
+  const tbody=document.getElementById('profileHistoryBody');
+  if(!user.history.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-dim);">Nenhuma compra ainda.</td></tr>';return;}
+  tbody.innerHTML=[...user.history].reverse().map(h=>`<tr><td>${fmtDate(h.ts)}</td><td>${h.item}</td><td>${h.price.toLocaleString('pt-BR')} Coins</td><td><span style="color:var(--emerald)">Concluído</span></td></tr>`).join('');
+}
+
+function selfAddBalance(){
+  if(!state.session)return;
+  const amt=parseInt(document.getElementById('balanceAddInput').value);
+  const m=document.getElementById('balanceMsg');
+  if(isNaN(amt)){m.innerHTML='<span class="msg-error">Digite um valor!</span>';m.style.display='';return;}
+  const user=state.users[state.session.nick];
+  user.balance=Math.max(0,user.balance+amt); save();
+  document.getElementById('profileBalance').textContent=user.balance.toLocaleString('pt-BR');
+  updateHeroBalance();
+  m.innerHTML='<span class="msg-success">Saldo: '+user.balance.toLocaleString('pt-BR')+' Coins</span>';
+  m.style.display=''; document.getElementById('balanceAddInput').value='';
+  toast('Saldo atualizado!');
+}
+
+function changePassword(){
+  if(!state.session)return;
+  const old=document.getElementById('oldPwInput').value, nw=document.getElementById('newPwInput').value, cf=document.getElementById('confirmPwInput').value;
+  const m=document.getElementById('pwMsg'), user=state.users[state.session.nick];
+  if(user.passwordHash!==hashPw(old)){m.innerHTML='<span class="msg-error">Senha atual incorreta!</span>';return;}
+  if(nw.length<4){m.innerHTML='<span class="msg-error">Mínimo 4 caracteres!</span>';return;}
+  if(nw!==cf){m.innerHTML='<span class="msg-error">Senhas não conferem!</span>';return;}
+  user.passwordHash=hashPw(nw); save();
+  m.innerHTML='<span class="msg-success">Senha alterada!</span>';
+  ['oldPwInput','newPwInput','confirmPwInput'].forEach(id=>document.getElementById(id).value='');
+  toast('Senha atualizada!');
+}
+
+// ── OWNER PRODUCTS ───────────────────────────────────────────
+function renderOwnerProducts(){ document.getElementById('ownerProductsGrid').innerHTML=state.products.map(p=>productCard(p,true)).join(''); }
+
+function openEditProduct(id){
+  const p=state.products.find(x=>x.id===id); if(!p)return;
+  document.getElementById('editProductId').value=id;
+  document.getElementById('editProductName').value=p.name;
+  document.getElementById('editProductPrice').value=p.price;
+  document.getElementById('editProductColor').value=p.color;
+  document.getElementById('editProductMsg').innerHTML='';
+  openModal('editProductModal');
+}
+
+function saveEditProduct(){
+  const id=parseInt(document.getElementById('editProductId').value);
+  const p=state.products.find(x=>x.id===id);
+  const name=document.getElementById('editProductName').value.trim();
+  const price=parseInt(document.getElementById('editProductPrice').value);
+  const color=document.getElementById('editProductColor').value;
+  const m=document.getElementById('editProductMsg');
+  if(!name||isNaN(price)||price<1){m.innerHTML='<span class="msg-error">Preencha os campos!</span>';return;}
+  p.name=name; p.price=price; p.color=color; save();
+  closeModal('editProductModal'); renderOwnerProducts(); renderProducts();
+  toast('Produto atualizado!');
+}
+
+function saveNewProduct(){
+  const name=document.getElementById('addProductName').value.trim();
+  const price=parseInt(document.getElementById('addProductPrice').value);
+  const color=document.getElementById('addProductColor').value;
+  const m=document.getElementById('addProductMsg');
+  if(!name||isNaN(price)||price<1){m.innerHTML='<span class="msg-error">Preencha os campos!</span>';return;}
+  const newId=Math.max(0,...state.products.map(p=>p.id))+1;
+  state.products.push({id:newId,name,price,color}); save();
+  closeModal('addProductModal'); renderOwnerProducts(); renderProducts();
+  toast('Produto adicionado!');
+  document.getElementById('addProductName').value=''; document.getElementById('addProductPrice').value='';
+}
+
+// ── OWNER HISTORY ────────────────────────────────────────────
+function renderOwnerHistory(){
+  const f=(document.getElementById('historyNickFilter')?.value||'').toLowerCase();
+  const tbody=document.getElementById('ownerHistoryBody');
+  const list=[...state.purchases].reverse().filter(h=>!f||h.nick.toLowerCase().includes(f));
+  if(!list.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-dim);">Nenhum registro.</td></tr>';return;}
+  tbody.innerHTML=list.map(h=>`<tr><td>${fmtDate(h.ts)}</td><td><span style="color:var(--grass-top)">${h.nick}</span></td><td>${h.item}</td><td>${h.price.toLocaleString('pt-BR')} Coins</td></tr>`).join('');
+}
+
+// ── OWNER USERS ──────────────────────────────────────────────
+function renderUsersTable(){
+  const s=(document.getElementById('userSearch')?.value||'').toLowerCase();
+  const tbody=document.getElementById('usersTableBody');
+  const users=Object.entries(state.users).filter(([n])=>!s||n.toLowerCase().includes(s));
+  if(!users.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-dim);">Nenhum usuário.</td></tr>';return;}
+  tbody.innerHTML=users.map(([nick,u])=>`<tr>
+    <td><span style="color:var(--grass-top)">${nick}</span>${u.email===OWNER_EMAIL?' <span style="color:var(--gold)">★</span>':''}</td>
+    <td style="font-size:14px;">${u.email}</td>
+    <td style="color:var(--gold);font-family:'Press Start 2P',monospace;font-size:8px;">${u.balance.toLocaleString('pt-BR')}</td>
+    <td><button class="btn-edit-owner" onclick="openEditUser('${nick}')">Saldo</button></td>
+  </tr>`).join('');
+}
+
+function openEditUser(nick){
+  const u=state.users[nick];
+  document.getElementById('editUserNick').value=nick;
+  document.getElementById('editUserNickDisplay').textContent=nick;
+  document.getElementById('editUserCurrentBalance').textContent=u.balance.toLocaleString('pt-BR');
+  document.getElementById('editUserBalanceInput').value=u.balance;
+  document.getElementById('editUserMsg').innerHTML='';
+  openModal('editUserModal');
+}
+
+function saveUserBalance(){
+  const nick=document.getElementById('editUserNick').value;
+  const val=parseInt(document.getElementById('editUserBalanceInput').value);
+  const m=document.getElementById('editUserMsg');
+  if(isNaN(val)||val<0){m.innerHTML='<span class="msg-error">Valor inválido!</span>';return;}
+  state.users[nick].balance=val; save();
+  closeModal('editUserModal'); renderUsersTable();
+  if(state.session?.nick===nick) updateHeroBalance();
+  toast('Saldo de '+nick+' atualizado!');
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+load(); loadSession(); renderProducts(); updateNavUI();
+</script>
 </body>
 </html>
