@@ -3,259 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>META CITY - Imobiliária Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>META STORE - Minecraft Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00d4ff;
-            --secondary: #00ffcc;
-            --danger: #ff0055;
-            --bg: #020b1a;
-            --glass: rgba(10, 25, 47, 0.7);
+            --mc-green: #3c8527;
+            --mc-green-hover: #53a039;
+            --mc-gray: #313233;
+            --mc-dark: #1e1e1f;
+            --mc-border: #000000;
+            --mc-text: #ffffff;
+            --mc-stone: #5a5a5a;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; }
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: var(--bg);
-            color: var(--primary);
+            font-family: 'VT323', monospace;
+            background-color: var(--mc-gray);
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Textura sutil */
+            color: var(--mc-text);
             margin: 0;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            font-size: 1.2rem;
         }
 
-        header {
+        /* TELA DE LOGIN */
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .login-box {
+            background: var(--mc-stone);
+            border: 4px solid var(--mc-border);
+            padding: 30px;
+            width: 350px;
             text-align: center;
-            padding: 50px 20px;
+            box-shadow: inset -4px -4px 0px #333, inset 4px 4px 0px #888;
+        }
+
+        .login-box h2 { font-size: 2.5rem; margin-top: 0; text-shadow: 2px 2px #000; }
+
+        input {
             width: 100%;
-            background: linear-gradient(to bottom, #001f3f, transparent);
+            padding: 10px;
+            margin: 10px 0;
+            background: #000;
+            border: 2px solid #555;
+            color: #0f0;
+            font-family: 'VT323';
+            font-size: 1.2rem;
         }
 
-        h1 { font-size: 3.5em; margin: 0; letter-spacing: 10px; text-shadow: 0 0 15px var(--primary); }
-
-        .wallet-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--primary);
-            padding: 15px 30px;
-            border-radius: 12px;
-            margin-top: 20px;
-            display: inline-block;
+        /* BOTÃO ESTILO MINECRAFT */
+        .mc-button {
+            background: #7c7c7c;
+            border: 3px solid #000;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: inset -3px -3px 0px #444, inset 3px 3px 0px #aaa;
+            font-family: 'VT323';
+            font-size: 1.3rem;
+            width: 100%;
         }
 
-        .container {
+        .mc-button:hover { background: var(--mc-green); box-shadow: inset -3px -3px 0px #255018, inset 3px 3px 0px #5eb83e; }
+        .mc-button:disabled { filter: grayscale(1); cursor: not-allowed; }
+
+        /* HEADER */
+        header {
+            background: var(--mc-dark);
+            width: 100%;
+            padding: 20px;
+            border-bottom: 4px solid var(--mc-green);
+            text-align: center;
+        }
+
+        h1 { font-size: 4rem; color: var(--mc-green); margin: 0; text-shadow: 4px 4px #000; }
+
+        .user-bar {
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-around;
+            border: 2px dashed var(--mc-green);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* GRID DE PRODUTOS */
+        .products-grid {
+            flex: 3;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 40px;
-            width: 100%;
-            max-width: 1400px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .card {
-            background: var(--glass);
-            border: 1px solid rgba(0, 212, 255, 0.1);
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
+        .product-card {
+            background: #4e4e4e;
+            border: 3px solid #000;
+            padding: 15px;
+            text-align: center;
+            box-shadow: inset -2px -2px 0px #222, inset 2px 2px 0px #777;
         }
 
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        .product-card h3 { margin: 10px 0; color: #ffcc00; }
+
+        /* HISTÓRICO */
+        .history-panel {
+            flex: 1;
+            background: var(--mc-dark);
+            border: 3px solid var(--mc-green);
+            padding: 15px;
+            height: fit-content;
         }
 
-        .card img { width: 100%; height: 200px; object-fit: cover; cursor: zoom-in; background: #000; }
-        .info { padding: 20px; text-align: center; }
-        .price { font-size: 1.6em; color: var(--secondary); display: block; margin-bottom: 15px; font-weight: bold; }
-
-        button { cursor: pointer; border: none; font-family: 'Rajdhani'; font-weight: bold; border-radius: 5px; text-transform: uppercase; }
-        .btn-buy { background: var(--primary); color: #000; padding: 12px; width: 100%; }
-        .btn-buy:disabled { background: #222 !important; color: #555 !important; cursor: not-allowed; }
-
-        #zoom-modal {
-            display: none; position: fixed; z-index: 20000;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); justify-content: center; align-items: center; cursor: zoom-out;
+        .history-panel h3 { border-bottom: 2px solid var(--mc-green); padding-bottom: 5px; }
+        .history-item {
+            font-size: 0.9rem;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+            color: #aaa;
         }
-        #zoom-modal img { max-width: 90%; max-height: 90%; border: 2px solid var(--primary); border-radius: 10px; }
-
-        .modal { position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); display: flex; justify-content: center; align-items: center; }
-        .modal-content { background: #0a192f; padding: 40px; border: 2px solid var(--primary); border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
-        input { display: block; width: 100%; margin: 12px 0; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); color: #fff; border-radius: 8px; font-family: 'Rajdhani'; }
 
         #custom-alert {
-            display: none; position: fixed; top: 20px; right: 20px; 
-            background: #001f3f; color: #00d4ff; border: 2px solid #00d4ff;
-            padding: 20px; border-radius: 10px; z-index: 30000;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-            font-weight: bold; max-width: 300px; text-align: center;
+            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--mc-green); border: 3px solid #000; padding: 15px; z-index: 50000;
         }
-
-        .owner-panel { background: rgba(255, 0, 85, 0.05); border: 1px solid var(--danger); padding: 20px; margin: 20px; border-radius: 10px; width: 90%; max-width: 1000px; }
     </style>
 </head>
-<body onload="checkLogin()">
+<body onload="init()">
 
-    <div id="custom-alert"></div>
+    <div id="custom-alert">COMPRA REALIZADA COM SUCESSO!</div>
 
-    <div id="zoom-modal" onclick="this.style.display='none'">
-        <img id="img-ampliada" src="">
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>MOJANG LOGIN</h2>
+            <input type="text" id="login-nick" placeholder="NICK MINECRAFT">
+            <input type="number" id="login-money" placeholder="SALDO INICIAL">
+            <button class="mc-button" onclick="login()">ENTRAR</button>
+        </div>
     </div>
 
-    <div id="login-screen" class="modal">
-        <div class="modal-content">
-            <h2>META ACCESS</h2>
-            <input type="email" id="email" placeholder="E-mail">
-            <input type="password" id="pass" placeholder="Senha">
-            <div id="extra-fields">
-                <input type="text" id="nickname" placeholder="Nick Minecraft">
-                <input type="number" id="initial-money" placeholder="Saldo Atual (MetaCash)">
+    <header>
+        <h1>META STORE</h1>
+        <div class="user-bar" id="user-bar">
+            <span>PLAYER: <b id="display-nick">-</b></span>
+            <span>SALDO: <b id="display-balance">0</b> MC</span>
+            <span style="cursor:pointer; color:red" onclick="logout()">[SAIR]</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <main class="products-grid" id="products-grid"></main>
+
+        <aside class="history-panel">
+            <h3>HISTÓRICO</h3>
+            <div id="history-list">
+                <div class="history-item">Nenhuma compra ainda.</div>
             </div>
-            <button class="btn-buy" onclick="handleAuth()">Sincronizar</button>
-        </div>
-    </div>
-
-    <div id="main-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-        <header>
-            <h1>META CITY</h1>
-            <div class="wallet-card" id="user-info">CARREGANDO...</div>
-            <br><br>
-            <button onclick="logout()" style="background:none; color:var(--danger); border:1px solid var(--danger); padding:5px; font-size:0.7em;">LOGOUT</button>
-        </header>
-
-        <div id="owner-panel" class="owner-panel" style="display: none;">
-            <h3 style="color: var(--danger); margin: 0 0 10px 0;">📊 RELATÓRIO PARA O ADM</h3>
-            <div id="notifications">Nenhuma venda agora.</div>
-        </div>
-
-        <main class="container" id="catalogo"></main>
+        </aside>
     </div>
 
     <script>
-        const OWNER_EMAIL = "vamoparacomissoalek@gmail.com";
-        let currentUser = null;
-        let vendidos = JSON.parse(localStorage.getItem('meta_vendidos')) || [];
+        let user = null;
+        let history = JSON.parse(localStorage.getItem('meta_history')) || [];
 
-        const casas = [
-            { id: 1, preco: 750000, img: "casa1.jpg" },
-            { id: 2, preco: 750000, img: "casa2.jpg" },
-            { id: 3, preco: 750000, img: "casa3.jpg" },
-            { id: 4, preco: 75000, img: "casa4.jpg" },
-            { id: 5, preco: 150000, img: "casa5.jpg" },
-            { id: 6, preco: 250000, img: "casa6.jpg" },
-            { id: 7, preco: 350000, img: "casa7.jpg" },
-            { id: 8, preco: 5000000, img: "casa8.jpg" },
-            { id: 9, preco: 4750000, img: "casa9.jpg" },
-            { id: 10, preco: 170000, img: "casa10.jpg" },
-            { id: 11, preco: 12000, img: "casa11.jpg" },
-            { id: 12, preco: 15000, img: "casa12.jpg" },
-            { id: 13, preco: 18000, img: "casa13.jpg" },
-            { id: 14, preco: 20000, img: "casa14.jpg" },
-            { id: 15, preco: 25000, img: "casa15.jpg" },
-            { id: 16, preco: 30000, img: "casa16.jpg" },
-            { id: 17, preco: 35000, img: "casa17.jpg" },
-            { id: 18, preco: 40000, img: "casa18.jpg" },
-            { id: 19, preco: 45000, img: "casa19.jpg" },
-            { id: 20, preco: 50000, img: "casa20.jpg" }
-        ];
+        // 10 PRODUTOS
+        const produtos = [];
+        for(let i=1; i<=10; i++) {
+            produtos.push({
+                id: i,
+                nome: `PRODUTO ${i}`,
+                preco: i * 500 // Preços variados: 500, 1000, 1500...
+            });
+        }
 
-        function checkLogin() {
-            const saved = localStorage.getItem('meta_session');
-            if (saved) {
-                currentUser = JSON.parse(saved);
+        function init() {
+            const savedUser = localStorage.getItem('meta_user');
+            if (savedUser) {
+                user = JSON.parse(savedUser);
                 document.getElementById('login-screen').style.display = 'none';
-                renderUI();
+                updateUI();
             }
         }
 
-        function handleAuth() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            const nick = document.getElementById('nickname').value;
-            const money = document.getElementById('initial-money').value;
+        function login() {
+            const nick = document.getElementById('login-nick').value;
+            const money = document.getElementById('login-money').value;
 
-            if (!email || !pass) return alert("E-mail e Senha obrigatórios!");
-            const storedPass = localStorage.getItem('pass_' + email);
-            if (!storedPass) {
-                if(!nick || !money) return alert("Primeiro acesso? Digite seu Nick e Saldo!");
-                localStorage.setItem('pass_' + email, pass);
-            } else if (pass !== storedPass) return alert("Senha incorreta!");
+            if(!nick || !money) return alert("Preencha tudo!");
 
-            currentUser = { email, nick: nick || "User", balance: parseFloat(money) || 0 };
-            localStorage.setItem('meta_session', JSON.stringify(currentUser));
+            user = { nick: nick, balance: parseFloat(money) };
+            localStorage.setItem('meta_user', JSON.stringify(user));
             location.reload();
         }
 
-        function renderUI() {
-            document.getElementById('user-info').innerHTML = 
-                `PLAYER: <b style="color:#fff">${currentUser.nick}</b> | 
-                 SALDO: <b style="color:var(--secondary)">${currentUser.balance.toLocaleString()} MetaCash</b>`;
-
-            if (currentUser.email === OWNER_EMAIL) document.getElementById('owner-panel').style.display = 'block';
-            renderCatalogo();
-        }
-
-        function renderCatalogo() {
-            const container = document.getElementById('catalogo');
-            container.innerHTML = casas
-                .filter(casa => !vendidos.includes(casa.id))
-                .map(casa => {
-                    const canBuy = currentUser.balance >= casa.preco;
-                    return `
-                        <div class="card" id="casa-${casa.id}">
-                            <img src="${casa.img}" onclick="abrirZoom('${casa.img}')" onerror="this.src='https://via.placeholder.com/400x200?text=Lote+Sem+Foto'">
-                            <div class="info">
-                                <h3 style="margin:0; color:#fff">PROPRIEDADE #${casa.id}</h3>
-                                <span class="price">${casa.preco.toLocaleString()} MC</span>
-                                <button class="btn-buy" ${canBuy ? '' : 'disabled'} 
-                                    onclick="comprar(${casa.id}, ${casa.preco})">
-                                    ${canBuy ? 'COMPRAR UNIDADE' : 'SALDO INSUFICIENTE'}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-        }
-
-        function abrirZoom(src) {
-            const img = document.getElementById('img-ampliada');
-            img.src = src;
-            document.getElementById('zoom-modal').style.display = 'flex';
-        }
-
-        function comprar(id, preco) {
-            if (currentUser.balance < preco) return alert("Saldo insuficiente!");
-
-            currentUser.balance -= preco;
-            vendidos.push(id);
+        function updateUI() {
+            document.getElementById('display-nick').innerText = user.nick;
+            document.getElementById('display-balance').innerText = user.balance.toLocaleString();
             
-            localStorage.setItem('meta_session', JSON.stringify(currentUser));
-            localStorage.setItem('meta_vendidos', JSON.stringify(vendidos));
+            renderProducts();
+            renderHistory();
+        }
 
-            const painel = document.getElementById('notifications');
-            const log = document.createElement('div');
-            log.style.padding = "10px"; log.style.borderBottom = "1px solid #333";
-            log.innerHTML = `🏠 <b>${currentUser.nick}</b> comprou a <b>Casa #${id}</b>. <br> 
-                             <code style="color:var(--secondary)">/eco take ${currentUser.nick} ${preco}</code>`;
-            if(painel.innerText.includes("Nenhuma")) painel.innerHTML = "";
-            painel.prepend(log);
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = produtos.map(p => `
+                <div class="product-card">
+                    <div style="background:#222; height:80px; display:flex; align-items:center; justify-content:center; font-size:2rem;">📦</div>
+                    <h3>${p.nome}</h3>
+                    <p style="color:#0f0">${p.preco} MC</p>
+                    <button class="mc-button" 
+                        ${user.balance >= p.preco ? '' : 'disabled'} 
+                        onclick="buy(${p.id}, ${p.preco}, '${p.nome}')">
+                        ${user.balance >= p.preco ? 'COMPRAR' : 'SEM SALDO'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            if(history.length === 0) return;
+            
+            list.innerHTML = history.map(h => `
+                <div class="history-item">
+                    [${h.date}] comprou ${h.item} por ${h.price}
+                </div>
+            `).reverse().join('');
+        }
+
+        function buy(id, price, name) {
+            if(user.balance < price) return;
+
+            user.balance -= price;
+            
+            const now = new Date();
+            const dateStr = now.getHours() + ":" + now.getMinutes();
+            
+            history.push({ item: name, price: price, date: dateStr });
+            
+            localStorage.setItem('meta_user', JSON.stringify(user));
+            localStorage.setItem('meta_history', JSON.stringify(history));
 
             const alertBox = document.getElementById('custom-alert');
-            alertBox.innerHTML = "PROPRIEDADE ADQUIRIDA, FALE COM O ADM PARA RECEBER E REALIZAR O PAGAMENTO";
             alertBox.style.display = 'block';
-            
-            setTimeout(() => { alertBox.style.display = 'none'; }, 8000);
+            setTimeout(() => { alertBox.style.display = 'none'; }, 3000);
 
-            renderUI();
+            updateUI();
         }
 
         function logout() {
-            localStorage.removeItem('meta_session');
+            localStorage.removeItem('meta_user');
+            localStorage.removeItem('meta_history');
             location.reload();
         }
     </script>
